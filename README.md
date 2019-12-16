@@ -1,2 +1,2 @@
-# IteratedLearning
-Neural Iterated Learning
+# Neural Iterated Learning
+
