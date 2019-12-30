@@ -32,6 +32,9 @@ class ReferentialBaseIterator(BaseIterator):
     def __init__(self, file_path, batch_size, num_distractors=14, device=torch.device('cpu')):
         super().__init__(file_path, batch_size, device=device)
         self.num_distractors = 14
+        
+        self.batches = None
+        self.batch_indices = None
 
     @abstractmethod
     def initialise_batches(self):
@@ -41,7 +44,7 @@ class ReferentialBaseIterator(BaseIterator):
         correct_batch = self.batches[idx]
 
         candidate_batches = [
-            self._generate_distractor_batch(idx) for _ in range(self.num_distractors+1)
+            self._generate_distracting_batch(idx) for _ in range(self.num_distractors+1)
         ]
 
         golden_idx = np.random.randint(0, high=self.num_distractors+1, size=(correct_batch['data'].shape[0]))
@@ -70,7 +73,7 @@ class ReferentialBaseIterator(BaseIterator):
 
     def _reperm_batch(self, idx):
         # the "batch size" is not necessarily self.batch_size as the last batch may contain fewer samples than others.
-        _batch_size = self.databatch_set[idx]['data'].shape[0]
+        _batch_size = self.batches[idx]['data'].shape[0]
 
         original_idx = torch.arange(_batch_size, device=self.device)
         new_idx = torch.randperm(_batch_size, device=self.device)
@@ -78,8 +81,8 @@ class ReferentialBaseIterator(BaseIterator):
         while not (original_idx == new_idx).sum().eq(0):
             new_idx = torch.randperm(_batch_size, device=self.device)
 
-        shuffled_imgs = self.databatch_set[idx]['data'][new_idx]
-        shuffled_labels = [self.databatch_set[idx]['label'][i] for i in new_idx]
+        shuffled_imgs = self.batches[idx]['data'][new_idx]
+        shuffled_labels = [self.batches[idx]['label'][i] for i in new_idx]
 
         return {
             'data': shuffled_imgs,

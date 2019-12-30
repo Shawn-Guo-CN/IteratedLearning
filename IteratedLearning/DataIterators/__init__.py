@@ -1,1 +1,2 @@
-from .BaseIterator import BaseIterator
+from .BaseIterator import BaseIterator, ReferentialBaseIterator
+from .ImageReferentialIterator import ImageReferentialIterator

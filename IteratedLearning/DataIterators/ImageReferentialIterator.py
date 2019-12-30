@@ -1,22 +1,25 @@
 from .BaseIterator import ReferentialBaseIterator
 
+import numpy as np
 import os, math
 import torch, torchvision
+from PIL import Image
 
 
 class ImageReferentialIterator(ReferentialBaseIterator):
     def __init__(self, file_path, batch_size, num_distractors=14, device=torch.device('cpu')):
         super().__init__(file_path, batch_size, num_distractors=num_distractors, device=device)
         self.batches = self.initialise_batches()
+        self.batch_indices = np.arange(len(self.batches))
 
     @staticmethod
-    def _load_img_set(self, dir_path):
+    def _load_img_set(dir_path):
         img_file_names = os.listdir(dir_path)
         imgs = [Image.open(os.path.join(dir_path, name)).convert('RGB') for name in img_file_names]
         return img_file_names, imgs
 
     @staticmethod
-    def _build_img_tensors(imgs, device=args.device):
+    def _build_img_tensors(imgs, device=torch.device('cpu')):
         tensors = []
         for img in imgs:
             tensors.append(torchvision.transforms.ToTensor()(img))
@@ -26,7 +29,7 @@ class ImageReferentialIterator(ReferentialBaseIterator):
     def initialise_batches(self):
         batches = []
 
-        img_names, imgs = self.load_img_set(self.file_path)
+        img_names, imgs = self._load_img_set(self.file_path)
         img_names = [name.split('.')[0] for name in img_names]
 
         assert len(img_names) == len(imgs)
@@ -49,7 +52,7 @@ class ImageReferentialIterator(ReferentialBaseIterator):
             img_label_batch = img_names[i*self.batch_size: min((i+1)*self.batch_size, len(imgs))]
 
             batches.append({
-                'imgs': img_batch,
+                'data': img_batch,
                 'label': img_label_batch,
             })
 
