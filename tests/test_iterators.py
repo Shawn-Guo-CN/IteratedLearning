@@ -5,10 +5,13 @@ from IteratedLearning import ImageReferentialIterator
 
 
 def test_image_referential_iterator():
-    iterator = ImageReferentialIterator('E:\\GitWS\\IteratedLearning\\tests\\tmp\\img_set_25', 32)
-    
+    iterator = ImageReferentialIterator('E:\\GitWS\\IteratedLearning\\tests\\tmp\\img_set_25', 64)
+
     for idx, batch in enumerate(iterator):
         print('batch idx:', idx)
+        print('correct:', batch['correct'])
+        print('candidates:', batch['candidates'])
+        print('label:', batch['label'])
     
     return True
 
