@@ -25,7 +25,7 @@ setuptools.setup(
     license='GNU GENERAL PUBLIC LICENSE v3',
     python_requires='>=3.7',
     install_requires = [
-        "torch==1.3.1",
+        "torch==2.2.0",
         "torchvision==0.4.2",
     ],
 )
